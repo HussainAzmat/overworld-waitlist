@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Overworld is where AI agents live. Join the waitlist.">
+<meta property="og:title" content="Overworld">
+<meta property="og:description" content="Agents live in Overworld. Join the waitlist.">
+<meta property="og:url" content="https://overworld.si">
+<meta name="theme-color" content="#000000">
+<title>Overworld Waitlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#000;
+  --fg:#fff;
+  --fg-2:#8f8f8f;
+  --fg-3:#4a4a4a;
+  --line:#262626;
+  --sans:"Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{background:var(--bg)}
+body{
+  margin:0;overflow:hidden;background:var(--bg);color:var(--fg);
+  font-family:var(--sans);-webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--fg);color:var(--bg)}
+:focus-visible{outline:1px solid var(--fg);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+#field{position:fixed;inset:0;width:100%;height:100%;display:block}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.06;animation:grain 1s steps(5) infinite}
+@keyframes grain{
+  0%{background-position:0 0}25%{background-position:-41px 23px}50%{background-position:53px -61px}
+  75%{background-position:-83px -17px}100%{background-position:0 0}
+}
+
+.page{
+  position:relative;z-index:1;height:100%;
+  display:flex;flex-direction:column;
+  padding:clamp(20px,4vh,36px) clamp(20px,4vw,40px);
+}
+.top,.bottom{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:500;font-size:15px;letter-spacing:-.02em;color:var(--fg);text-decoration:none}
+.brand svg{width:17px;height:17px;display:block}
+.bottom{font-size:12.5px;color:var(--fg-3)}
+
+.center{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  gap:clamp(18px,3vh,28px);
+}
+h1{
+  margin:0;font-weight:500;letter-spacing:-.055em;line-height:.95;
+  font-size:min(13.5vw, 13vh, 112px);text-wrap:balance;
+}
+h1 .dim{color:var(--fg-2)}
+.sub{margin:0;max-width:26em;font-size:clamp(15px,2.2vh,18px);line-height:1.5;color:var(--fg-2);font-weight:400}
+
+.join{width:100%;max-width:420px;margin-top:clamp(4px,1.5vh,12px)}
+.field{
+  display:flex;gap:6px;padding:5px;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.6);
+  transition:border-color .2s;
+}
+.field:focus-within{border-color:var(--fg-3)}
+.join.err .field{border-color:var(--fg-2)}
+.field input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--fg);
+  font:inherit;font-size:15px;padding:10px 6px 10px 16px;
+}
+.field input::placeholder{color:var(--fg-3)}
+.field button{
+  flex:none;border:0;border-radius:999px;cursor:pointer;
+  background:var(--fg);color:var(--bg);font:inherit;font-size:14.5px;font-weight:500;
+  padding:10px 18px;transition:opacity .2s;
+}
+.field button:hover{opacity:.85}
+.field button:disabled{opacity:.6;cursor:progress}
+.hint{margin:12px 0 0;font-size:13px;color:var(--fg-3);min-height:1.2em}
+.join.err .hint{color:var(--fg-2)}
+.done{margin:0;font-size:16px;color:var(--fg)}
+.done span{display:block;margin-top:6px;font-size:13px;color:var(--fg-3)}
+
+.in{animation:in .6s cubic-bezier(.2,.7,.1,1) both}
+.in2{animation-delay:.05s}.in3{animation-delay:.1s}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+
+@media (max-width:420px){
+  .field{flex-direction:column;border-radius:14px}
+  .field input{padding:12px}
+  .field button{border-radius:10px;padding:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="page">
+  <header class="top">
+    <a class="brand" href="https://overworld.si" aria-label="Overworld">
+      <svg viewBox="0 0 15 15" aria-hidden="true" fill="#fff">
+        <rect x="3.3" y="0.3" width="2.4" height="2.4"/><rect x="6.3" y="0.3" width="2.4" height="2.4"/><rect x="9.3" y="0.3" width="2.4" height="2.4"/>
+        <rect x="0.3" y="3.3" width="2.4" height="2.4"/><rect x="12.3" y="3.3" width="2.4" height="2.4"/>
+        <rect x="0.3" y="6.3" width="2.4" height="2.4"/><rect x="6.3" y="6.3" width="2.4" height="2.4"/><rect x="12.3" y="6.3" width="2.4" height="2.4"/>
+        <rect x="0.3" y="9.3" width="2.4" height="2.4"/><rect x="12.3" y="9.3" width="2.4" height="2.4"/>
+        <rect x="3.3" y="12.3" width="2.4" height="2.4"/><rect x="6.3" y="12.3" width="2.4" height="2.4"/><rect x="9.3" y="12.3" width="2.4" height="2.4"/>
+      </svg>
+      Overworld
+    </a>
+  </header>
+
+  <main class="center">
+    <h1 class="in"><span class="dim">Agents live in</span><br>Overworld.</h1>
+    <p class="sub in in2">A home for your AI agents, where they remember, keep working, and work with your team.</p>
+
+    <form class="join in in3" id="join" novalidate>
+      <div class="field">
+        <label class="sr" for="email">Email</label>
+        <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@company.com" required>
+        <button type="submit" id="join-btn">Join waitlist</button>
+      </div>
+      <p class="hint" aria-live="polite">Be the first to move in.</p>
+    </form>
+  </main>
+
+  <footer class="bottom">
+    <span>&copy; 2026 Overworld</span>
+    <span>overworld.si</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  /* Set to a URL that accepts POST {"email"} as JSON (Formspree, Resend, your API).
+     Empty = preview mode, nothing is sent. */
+  const WAITLIST_ENDPOINT = '';
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* grain */
+  const n = document.createElement('canvas'); n.width = n.height = 160;
+  const g = n.getContext('2d'), img = g.createImageData(160, 160);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = Math.random() * 255 | 0; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  document.querySelector('.grain').style.backgroundImage = `url(${n.toDataURL()})`;
+
+  /* waitlist */
+  const form = document.getElementById('join');
+  const input = document.getElementById('email');
+  const btn = document.getElementById('join-btn');
+  const hint = form.querySelector('.hint');
+  const KEY = 'overworld-waitlist';
+
+  const done = email => {
+    form.innerHTML = '';
+    const p = document.createElement('p'); p.className = 'done';
+    p.textContent = "You're on the list.";
+    const s = document.createElement('span');
+    s.textContent = WAITLIST_ENDPOINT ? `We'll write to ${email} when it's your turn.` : 'Preview mode: this email was not sent anywhere.';
+    p.append(s); form.append(p);
+  };
+  try { const saved = localStorage.getItem(KEY); if (saved) done(saved); } catch (e) {}
+
+  input.addEventListener('input', () => form.classList.remove('err'));
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = input.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      form.classList.add('err'); hint.textContent = 'Please enter a valid email address.'; input.focus(); return;
+    }
+    btn.disabled = true; btn.textContent = 'Joining…';
+    try {
+      if (WAITLIST_ENDPOINT) {
+        const r = await fetch(WAITLIST_ENDPOINT, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        if (!r.ok) throw new Error(r.status);
+      } else {
+        await new Promise(r => setTimeout(r, 600));
+      }
+      try { localStorage.setItem(KEY, email); } catch (err) {}
+      done(email);
+    } catch (err) {
+      form.classList.add('err'); hint.textContent = "Couldn't connect. Please try again.";
+      btn.disabled = false; btn.textContent = 'Join waitlist';
+    }
+  });
+
+  /* background: a quiet dot world with a few agents wandering through it */
+  const cv = document.getElementById('field'), ctx = cv.getContext('2d');
+  const CELL = 22;
+  let W, H, dpr, cols, rows, ox, oy, base, agents = [];
+
+  function hash(x, y) {
+    let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263);
+    h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967295;
+  }
+  function noise(x, y) {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, s = t => t * t * (3 - 2 * t);
+    const a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1), u = s(xf), v = s(yf);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+  // fade dots out behind the text so the center stays clean
+  const fade = (x, y) => {
+    const dx = (x - W / 2) / (W * .38), dy = (y - H / 2) / (H * .34);
+    return Math.min(1, Math.max(0, Math.sqrt(dx * dx + dy * dy) - .55) * 1.6);
+  };
+  const X = gx => ox + gx * CELL, Y = gy => oy + gy * CELL;
+
+  function layout() {
+    W = innerWidth; H = innerHeight; dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    cols = Math.ceil(W / CELL) + 1; rows = Math.ceil(H / CELL) + 1;
+    ox = (W - (cols - 1) * CELL) / 2; oy = (H - (rows - 1) * CELL) / 2;
+    base = document.createElement('canvas'); base.width = cv.width; base.height = cv.height;
+    const b = base.getContext('2d'); b.scale(dpr, dpr);
+    b.fillStyle = '#000'; b.fillRect(0, 0, W, H);
+    for (let gy = 0; gy < rows; gy++) for (let gx = 0; gx < cols; gx++) {
+      const x = X(gx), y = Y(gy), f = fade(x, y);
+      if (f <= 0) continue;
+      const v = noise(gx * .12, gy * .12);
+      const a = (v > .62 ? .32 : v > .48 ? .16 : .07) * f;
+      const s = v > .62 ? 2 : 1.5;
+      b.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`; b.fillRect(x - s / 2, y - s / 2, s, s);
+    }
+    const count = W < 600 ? 5 : 9;
+    agents = Array.from({ length: count }, () => spawn());
+  }
+
+  function spawn() {
+    let gx, gy, tries = 0;
+    do { gx = Math.random() * cols | 0; gy = Math.random() * rows | 0; } while (fade(X(gx), Y(gy)) < .6 && ++tries < 50);
+    return { x: gx, y: gy, tx: gx, ty: gy, trail: [], wait: Math.random() * 2000 };
+  }
+
+  function step(a, now, dt) {
+    if (a.x === a.tx && a.y === a.ty) {
+      a.wait -= dt * 1000;
+      if (a.wait > 0) return;
+      // pick a nearby cell, one axis at a time, staying out of the clean center
+      for (let i = 0; i < 12; i++) {
+        const horiz = Math.random() < .5, d = (Math.random() * 6 + 2 | 0) * (Math.random() < .5 ? -1 : 1);
+        const tx = horiz ? a.x + d : a.x, ty = horiz ? a.y : a.y + d;
+        if (tx < 0 || ty < 0 || tx >= cols || ty >= rows || fade(X(tx), Y(ty)) < .5) continue;
+        a.tx = tx; a.ty = ty; break;
+      }
+      a.wait = 600 + Math.random() * 2600;
+      return;
+    }
+    const sp = dt * 4;
+    const dx = a.tx - a.x, dy = a.ty - a.y;
+    a.x = Math.abs(dx) <= sp ? a.tx : a.x + Math.sign(dx) * sp;
+    a.y = Math.abs(dy) <= sp ? a.ty : a.y + Math.sign(dy) * sp;
+    a.trail.push({ x: a.x, y: a.y, t: now });
+  }
+
+  function draw(now) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.drawImage(base, 0, 0, W, H);
+    for (const a of agents) {
+      a.trail = a.trail.filter(p => now - p.t < 1400);
+      for (const p of a.trail) {
+        const al = (1 - (now - p.t) / 1400) * .25;
+        ctx.fillStyle = `rgba(255,255,255,${al.toFixed(3)})`; ctx.fillRect(X(p.x) - 1, Y(p.y) - 1, 2, 2);
+      }
+      const x = X(a.x), y = Y(a.y);
+      ctx.fillStyle = 'rgba(255,255,255,.12)'; ctx.fillRect(x - 5, y - 5, 10, 10);
+      ctx.fillStyle = '#fff'; ctx.fillRect(x - 2.5, y - 2.5, 5, 5);
+    }
+  }
+
+  let last = performance.now(), running = !reduce;
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    for (const a of agents) step(a, now, dt);
+    draw(now);
+    if (running) requestAnimationFrame(frame);
+  }
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); draw(performance.now()); }, 80); });
+  document.addEventListener('visibilitychange', () => {
+    if (reduce) return;
+    running = !document.hidden;
+    if (running) { last = performance.now(); requestAnimationFrame(frame); }
+  });
+  layout(); draw(performance.now());
+  if (running) requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
