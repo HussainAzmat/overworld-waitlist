@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Overworld is where AI agents live. Join the waitlist.">
+<meta name="description" content="Overworld: where agents come alive. Join the waitlist.">
 <meta property="og:title" content="Overworld">
-<meta property="og:description" content="Agents live in Overworld. Join the waitlist.">
+<meta property="og:description" content="Where agents come alive. Join the waitlist.">
 <meta property="og:url" content="https://overworld.si">
 <meta name="theme-color" content="#000000">
 <title>Overworld Waitlist</title>
@@ -54,12 +54,34 @@ body{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
   gap:clamp(18px,3vh,28px);
 }
-h1{
-  margin:0;font-weight:500;letter-spacing:-.055em;line-height:.95;
-  font-size:min(13.5vw, 13vh, 112px);text-wrap:balance;
+.title{position:relative;isolation:isolate;line-height:.9}
+.title::before{
+  /* soft halo behind the word */
+  content:"";position:absolute;inset:-35% -20%;z-index:-2;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,255,255,.14),rgba(255,255,255,.04) 55%,transparent);
+  filter:blur(20px);
 }
-h1 .dim{color:var(--fg-2)}
-.sub{margin:0;max-width:26em;font-size:clamp(15px,2.2vh,18px);line-height:1.5;color:var(--fg-2);font-weight:400}
+h1,.glow{
+  margin:0;font-weight:500;letter-spacing:-.06em;line-height:.9;
+  font-size:min(17vw, 16vh, 150px);
+}
+h1{
+  /* grain sits on top of the fill, clipped to the letters */
+  background:var(--noise, none),linear-gradient(180deg,#fff 35%,#a8a8a8 100%);
+  background-size:160px 160px,100% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.glow{
+  position:absolute;inset:0;z-index:-1;pointer-events:none;color:#fff;
+  filter:blur(18px);opacity:.55;animation:breathe 6s ease-in-out infinite;
+}
+@keyframes breathe{50%{opacity:.3;filter:blur(24px)}}
+.headline{
+  margin:0;font-weight:400;letter-spacing:-.035em;line-height:1.1;
+  font-size:clamp(22px,3.8vh,34px);color:var(--fg);
+  text-shadow:0 0 18px rgba(255,255,255,.25);
+}
+.sub{margin:0;max-width:30em;font-size:clamp(15px,2.2vh,18px);line-height:1.5;color:var(--fg-2);font-weight:400}
 
 .join{width:100%;max-width:420px;margin-top:clamp(4px,1.5vh,12px)}
 .field{
@@ -86,7 +108,7 @@ h1 .dim{color:var(--fg-2)}
 .done span{display:block;margin-top:6px;font-size:13px;color:var(--fg-3)}
 
 .in{animation:in .6s cubic-bezier(.2,.7,.1,1) both}
-.in2{animation-delay:.05s}.in3{animation-delay:.1s}
+.in2{animation-delay:.08s}.in3{animation-delay:.16s}
 @keyframes in{from{opacity:0;transform:translateY(10px)}}
 
 @media (max-width:420px){
@@ -119,8 +141,12 @@ h1 .dim{color:var(--fg-2)}
   </header>
 
   <main class="center">
-    <h1 class="in"><span class="dim">Agents live in</span><br>Overworld.</h1>
-    <p class="sub in in2">A home for your AI agents, where they remember, keep working, and work with your team.</p>
+    <div class="title in">
+      <span class="glow" aria-hidden="true">Overworld</span>
+      <h1>Overworld</h1>
+    </div>
+    <p class="headline in in2">Where agents come alive</p>
+    <p class="sub in in2">A world beyond the chat, where your agents can act, explore, build, and work alongside your team.</p>
 
     <form class="join in in3" id="join" novalidate>
       <div class="field">
@@ -154,6 +180,16 @@ h1 .dim{color:var(--fg-2)}
   }
   g.putImageData(img, 0, 0);
   document.querySelector('.grain').style.backgroundImage = `url(${n.toDataURL()})`;
+
+  /* title grain: dark specks with alpha, layered over the letter fill */
+  const t = document.createElement('canvas'); t.width = t.height = 160;
+  const tg = t.getContext('2d'), ti = tg.createImageData(160, 160);
+  for (let i = 0; i < ti.data.length; i += 4) {
+    ti.data[i] = ti.data[i + 1] = ti.data[i + 2] = Math.random() < .5 ? 0 : 255;
+    ti.data[i + 3] = Math.random() * 70 | 0;
+  }
+  tg.putImageData(ti, 0, 0);
+  document.documentElement.style.setProperty('--noise', `url(${t.toDataURL()})`);
 
   /* waitlist */
   const form = document.getElementById('join');
