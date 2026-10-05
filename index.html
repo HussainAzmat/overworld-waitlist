@@ -11,7 +11,7 @@
 <title>Overworld Waitlist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Instrument+Serif:ital@1&display=swap">
 <style>
 :root{
   color-scheme: dark;
@@ -20,6 +20,7 @@
   --fg-2:#8f8f8f;
   --fg-3:#4a4a4a;
   --line:#262626;
+  --serif:"Instrument Serif", ui-serif, Georgia, serif;
   --sans:"Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 *{box-sizing:border-box}
@@ -58,7 +59,7 @@ body{
 .title::before{
   /* soft halo behind the word */
   content:"";position:absolute;inset:-35% -20%;z-index:-2;pointer-events:none;
-  background:radial-gradient(closest-side,rgba(255,255,255,.14),rgba(255,255,255,.04) 55%,transparent);
+  background:radial-gradient(closest-side,rgba(255,255,255,.06),rgba(255,255,255,.015) 55%,transparent);
   filter:blur(20px);
 }
 h1,.glow{
@@ -73,15 +74,22 @@ h1{
 }
 .glow{
   position:absolute;inset:0;z-index:-1;pointer-events:none;color:#fff;
-  filter:blur(18px);opacity:.55;animation:breathe 6s ease-in-out infinite;
+  filter:blur(22px);opacity:.22;animation:breathe 6s ease-in-out infinite;
 }
-@keyframes breathe{50%{opacity:.3;filter:blur(24px)}}
+@keyframes breathe{50%{opacity:.14}}
 .headline{
-  margin:0;font-weight:400;letter-spacing:-.035em;line-height:1.1;
-  font-size:clamp(22px,3.8vh,34px);color:var(--fg);
-  text-shadow:0 0 18px rgba(255,255,255,.25);
+  margin:0;font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;line-height:1.1;
+  font-size:clamp(28px,4.6vh,42px);color:var(--fg);
+  text-shadow:0 0 14px rgba(255,255,255,.18);
 }
-.sub{margin:0;max-width:30em;font-size:clamp(15px,2.2vh,18px);line-height:1.5;color:var(--fg-2);font-weight:400}
+/* same treatment as the title, dialled down for body size */
+.sub{
+  background:var(--noise, none),linear-gradient(180deg,#cfcfcf,#8f8f8f);
+  background-size:160px 160px,100% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 10px rgba(255,255,255,.12));
+}
+.sub{margin:0;max-width:30em;font-size:clamp(15px,2.2vh,18px);line-height:1.5;font-weight:400}
 
 .join{width:100%;max-width:420px;margin-top:clamp(4px,1.5vh,12px)}
 .field{
@@ -186,7 +194,7 @@ h1{
   const tg = t.getContext('2d'), ti = tg.createImageData(160, 160);
   for (let i = 0; i < ti.data.length; i += 4) {
     ti.data[i] = ti.data[i + 1] = ti.data[i + 2] = Math.random() < .5 ? 0 : 255;
-    ti.data[i + 3] = Math.random() * 70 | 0;
+    ti.data[i + 3] = Math.random() * 28 | 0;
   }
   tg.putImageData(ti, 0, 0);
   document.documentElement.style.setProperty('--noise', `url(${t.toDataURL()})`);
